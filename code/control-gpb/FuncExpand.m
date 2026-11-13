@@ -1,0 +1,57 @@
+function [FuncOut] = FuncExpand(s,func,Inputs,InputValues);
+
+% Total Number of States
+No_States = 2^s(2);
+FuncOut = [];
+if No_States == 2
+    if str2num(func(1,1)) == 0
+        FuncOut(1) = str2num(func(1,end));
+        FuncOut(2) = str2num(func(2,end));
+    else
+        FuncOut(1) = str2num(func(2,end));
+        FuncOut(2) = str2num(func(1,end));
+    end
+else
+% Creating All Binary States
+for i = 1:No_States
+    BinMat(i,:) =  dec2binvec(i-1,s(2));
+end
+BinMat = fliplr(BinMat);
+
+if sum(Inputs) ~= 0
+    for i=1:length(Inputs)
+        
+     BinMat(:,Inputs(i)) = InputValues(i)*ones(1,No_States);
+    end
+ end
+
+
+
+
+FuncOut = [];
+nMax=size(func);
+nMax= nMax(1);
+for n=1:nMax
+    mask = zeros(1,s(2));
+    cnt=0;
+    ImpStates=0;
+    OutState=0;
+    MatchStates=0;
+    for i=1:s(2)
+        if func(n,i)~='-'
+            cnt = cnt+1;
+            ImpStates(cnt) = i;
+            mask(i) = str2num(func(n,i));
+        end
+    end
+    OutState = str2num(func(n,end));
+    MatchStates = ~xor(BinMat,repmat(mask,No_States,1));
+    for j = 1:No_States
+        if MatchStates(j,ImpStates)==1
+            FuncOut(j) = OutState;
+        end
+    end
+end
+
+end
+
