@@ -1,89 +1,47 @@
-% run_essentiality.m — Showcase driver for the EPP-DP essentiality code.
-%
-% NEW driver script — the original algorithm files in code/essentiality/
-% are NOT modified. This driver replicates the loop in EPP_DP.m but keeps
-% the per-node DP results (ProbMatrix, SeqMatrix, MLSeq) so that
-% fault-propagation figures can be generated.
-%
-% Run (from repository root):
-%   octave-cli examples/run_essentiality.m
-%
-% Outputs:
-%   results/generated/epp_dp_thelper.mat   (all raw results)
-%   results/generated/node_names.txt       (gene names, one per line)
-%   results/generated/prob_matrix_nodeNN.csv  (46 x TimeSteps per node)
-%   results/generated/prob_vector.csv      (NodeCount x TimeSteps)
-%   results/generated/final_ranks.csv      (node, mean rank)
-
-clear; clc;
-
-repo_root = fileparts(fileparts(mfilename('fullpath')));
-code_dir  = fullfile(repo_root, 'code', 'essentiality');
-out_dir   = fullfile(repo_root, 'results', 'generated');
-if ~exist(out_dir, 'dir'); mkdir(out_dir); end
-cd(code_dir);
-
-load THelpAttractor
-load THelpTruth
-file = textread('thelper.txt', '%s', 'delimiter', '\n', 'whitespace', '');
-NodeCount = 23;
-In = [1 3 5 9];
-InVals = [0 0 0 0];
-TDecay = 3;
-TimeSteps = 5;
-MutationType = 1;   % 1 = stuck-at-0 fault, 2 = stuck-at-1
-
-% 1. Fault statistics from the Boolean network definition
-[FStats Node F varF nv] = readingtext(file, In, NodeCount, InVals);
-
-% 2. Error-propagation probability matrices
-[P1_0MAT P0_1MAT NewBiasMAT] = EPPMatrices(FStats);
-
-% 3. EPP-DP for every node — keep per-node matrices for figures
-SA_Fault = MutationType;
-ProbMatrixAll = cell(NodeCount, 1);
-SeqMatrixAll  = cell(NodeCount, 1);
-for n = 1:NodeCount
-    [ProbMatrix SeqMatrix MLSeq(n,:) Faults] = DPALGONEW( ...
-        n, SA_Fault, FStats, P0_1MAT, P1_0MAT, NewBiasMAT, ...
-        NodeCount, TimeSteps, TDecay);
-    FaultStats(n) = Faults(n);
-    ProbVector(n,:) = sum(ProbMatrix);
-    ProbMatrixAll{n} = ProbMatrix;
-    SeqMatrixAll{n}  = SeqMatrix;
-    printf('EPP-DP done for node %d / %d\n', n, NodeCount);
+function result = run_essentiality(output_dir)
+%RUN_ESSENTIALITY Run both fault directions on the 23-node T-helper network.
+% Saves only algorithm results and model data, with no workstation paths.
+% Persistent faults are used for rankings; a three-step pulse provides the
+% separate propagation/decay example. SA1=1 and SA0=2 in the original engine.
+root = fileparts(fileparts(mfilename('fullpath')));
+if nargin < 1; output_dir = fullfile(root,'results','demo'); end
+if ~exist(output_dir,'dir'); mkdir(output_dir); end
+old_directory = pwd; restore_directory = onCleanup(@() cd(old_directory));
+cd(fullfile(root,'code','essentiality'));
+addpath(pwd);
+file = textread('thelper.txt','%s','delimiter','\n','whitespace','');
+evalc('[stats,nodes,F,varF,nv] = readingtext(file,[1 3 5 9],23,[0 0 0 0]);');
+[p10,p01,bias] = EPPMatrices(stats);
+result.F = F; result.varF = varF; result.nv = nv;
+result.steps = 8; result.pulse_duration = 3;
+result.input_nodes = [1 3 5 9]; result.input_values = [0 0 0 0];
+result.names = cell(1,23);
+for i = 1:23
+    label = nodes(i).Type; equals = strfind(label,'=');
+    result.names{i} = strtrim(label(equals(end)+1:end));
 end
-
-% 4. Rankings (as in EPP_DP.m)
-for t = 1:TimeSteps
-    [Val Ind] = sort(ProbVector(:,t));
-    for n = 1:NodeCount
-        RankMat(n,t) = find(flipud(Ind) == n);
+for fault_value = 0:1
+    fault_code = 2-fault_value;
+    key = sprintf('sa%d',fault_value);
+    scores = zeros(46,8,23); parents = zeros(46,8,23);
+    pulse_scores = scores; pulse_parents = parents;
+    for source = 1:23
+        [scores(:,:,source),parents(:,:,source)] = EPPDPALGOR( ...
+            source,fault_code,stats,p01,p10,bias,23,8,8);
+        [pulse_scores(:,:,source),pulse_parents(:,:,source)] = EPPDPALGOR( ...
+            source,fault_code,stats,p01,p10,bias,23,8,3);
     end
+    influence = reshape(sum(scores,1),8,23)';
+    [mean_rank,rank_by_step,order] = rank_fault_scores(influence);
+    result.(key).scores = scores;
+    result.(key).predecessor = parents;
+    result.(key).pulse_scores = pulse_scores;
+    result.(key).pulse_predecessor = pulse_parents;
+    result.(key).influence = influence;
+    result.(key).mean_rank = mean_rank;
+    result.(key).rank_by_step = rank_by_step;
+    result.(key).order = order;
 end
-for n = 1:NodeCount
-    MeanRanks(n) = mean(RankMat(n,:));
+save(fullfile(output_dir,'essentiality.mat'),'result','-v7');
+fprintf('Saved SA0/SA1 essentiality and pulse propagation results.\n');
 end
-[MeanRank Rank] = sort(MeanRanks);
-FinalRanks = [flipud(Rank)' flipud(MeanRank)']
-
-% ---- save everything ----
-save('-mat', fullfile(out_dir, 'epp_dp_thelper.mat'));
-
-% node names (strip the "x" prefix used inside the text format)
-fid = fopen(fullfile(out_dir, 'node_names.txt'), 'w');
-for n = 1:NodeCount
-    nm = Node(n).Type;              % "# 1 = TCR" -> "TCR"
-    eq = strfind(nm, '=');
-    if ~isempty(eq); nm = strtrim(nm(eq(end)+1:end)); end
-    fprintf(fid, '%s\n', nm);
-end
-fclose(fid);
-
-for n = 1:NodeCount
-    csvwrite(fullfile(out_dir, sprintf('prob_matrix_node%02d.csv', n)), ...
-             ProbMatrixAll{n});
-end
-csvwrite(fullfile(out_dir, 'prob_vector.csv'), ProbVector);
-csvwrite(fullfile(out_dir, 'final_ranks.csv'), FinalRanks);
-printf('Saved results to %s\n', out_dir);

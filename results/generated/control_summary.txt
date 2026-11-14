@@ -1,4 +1,0 @@
-target=cCbl(11)->1  gpb_iters=200 uct_iters=800
-GPB.BestSolution=[6  50  13] final_reward=0.9230
-GPB genes decoded: LCK=SA0 ZAP70=SA1 LAT=SA0 
-mean_HD=0.0854 target_achieved=1.000

@@ -63,8 +63,7 @@ else
 end
 
 % Generating Initial Move
-rperm=randperm(length(Nodes));
-BestMoveSeq = Nodes(rperm(1:TDepth));
+% Select the initial move only after contradictory clamps are removed.
 % Extracting All Possible Arm combinations
 ExpArms = Mycombntns(Nodes,TDepth);
 % Checking for illegal Combinations
@@ -80,6 +79,7 @@ for n=1:size(ExpArms,1)
 end
 % Removing Illegal Arms
 ExpArms = ExpArms(logical(ind),:);
+BestMoveSeq = ExpArms(randi(size(ExpArms,1)),:);
 
 %%% GAUSSIAN PROCESS PARAMETERS %%% 
 c = 1; % Max Approximation Kernel Parameter
@@ -94,6 +94,12 @@ yt = EndReward; % Getting Initial End Reward
 FlagMat = ExpArms - repmat(BestMoveSeq,size(ExpArms,1),1);
 % Finding Index of arm applied
 ind = find(sum(FlagMat')==0);
+
+% Initialize the incumbent even when no later evaluation improves it.
+BestSeqSoFar = BestMoveSeq;
+InitialSolution = BestMoveSeq;
+InitialReward = EndReward;
+EvaluatedMoves = zeros(iters,TDepth);
 
 %%%%%%% GP ALGORITHM %%%%%%%%%%%%%%
 TrainMoves=[];
@@ -143,6 +149,7 @@ for count=1:iters;
 %%%% Extracting True End Reward %%%%%%%%%%%%%%%%%%%%%%%%%%
     [EndReward] = ApplySAFaults(BestMoveSeq,NetData,RealNodeCount,TDepth,ControlNode,ControlValue,runs,CREB_FLAG,XTRA);
     rewards(count)=EndReward;
+    EvaluatedMoves(count,:) = BestMoveSeq;
     ytrewards(count) = max(yt);
 
     % Ouput Purposes
@@ -196,3 +203,6 @@ GPRun.TargetValue = ControlValue;
 GPRun.Rewards = rewards;
 GPRun.BestSolution = BestSeqSoFar;
 GPRun.MoveList = TrainMoves;
+GPRun.EvaluatedMoves = EvaluatedMoves;
+GPRun.InitialSolution = InitialSolution;
+GPRun.InitialReward = InitialReward;

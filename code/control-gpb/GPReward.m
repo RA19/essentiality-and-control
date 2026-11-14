@@ -7,6 +7,6 @@ Ctinv = geninv(Ct);
 utExp = (ktexplores*(Ctinv*yt'))';
 % Predicted Posterior Variance
 h1=Ctinv*ktexplores';
-sigtExp = 1 -  sum((ktexplores'.*(h1)),1);
+sigtExp = max(0, 1 - sum((ktexplores'.*(h1)),1)); % numerical variance floor
 clear h1;
 Ft = A*utExp + B*sqrt(sigtExp);

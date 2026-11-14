@@ -60,8 +60,9 @@ for n=1:Iters
     
     % We are at leafe node, hence we must simulate the rest of
     % the 'game' randomly from the given position
-    [EndReward QuerySequence] = SimulateGameP(AppliedMoves,MoveList,NetData,NodeCount,RealNodeCount,depth,TDepth,ControlNode,ControlValue,UCTRuns,RewardRuns,RankedList,H);
+    [EndReward QuerySequence BestRolloutReward] = SimulateGameP(AppliedMoves,MoveList,NetData,NodeCount,RealNodeCount,depth,TDepth,ControlNode,ControlValue,UCTRuns,RewardRuns,RankedList,H);
     rewardplot(n) = EndReward;
+    rollout_best(n) = BestRolloutReward;
     
     % Updating Tree and Node Statistics
     UpdateTreeF(AppliedMoves,[1 NodesTraversed],EndReward,TreeNodes,TreeMoves,n,Iters);
@@ -74,12 +75,13 @@ end
 
 % UCT Output
 UCTRun.Rewards = rewardplot;
+UCTRun.RolloutBestRewards = rollout_best;
 UCTRun.SolutionsApplied =ListOfMoves;
 UCTRun.Stats.UCTRuns = UCTRuns;
 UCTRun.Stats.Iterations = Iters;
 UCTRun.Stats.ControlNode = ControlNode;
 UCTRun.Stats.ControlValue = ControlValue;
-[val ind] = max(rewardplot);
+[val ind] = max(rollout_best);
 UCTRun.BestSolution.Reward = val;
 UCTRun.BestSolution.GeneMutations = ListOfMoves(ind,:);
 

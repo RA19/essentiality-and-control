@@ -1,21 +1,15 @@
-function y = bnNextState(x,F,varF,nv)
-
-% y = bnNextState(x,F,varF,nv) - one step of a Boolean Network
-% This function performs one step of a BN. The current state is x (binary
-% vector of 1 x n, where n is # of genes). The other parameters are the
-% same as in bnA. Note: perturbation is not supported here.
-
-% Ilya Shmulevich; Aug. 28, 2002
-% Modified May 12, 2003 by HL.
-
-n = length(x); % number of genes
-y = zeros(size(x)); % initialize next state
-
-b = 2.^[size(varF,1)-1:-1:0]';
-for i=1:n
-    if nv(i) ~= 0
-        y(i) = F(x(varF(1:nv(i),i))*b(end-nv(i)+1:end)+1,i);
-    else
-        y(i) = x(i);
-    end
+function y = bnNextStateGP(x,F,varF,nv)
+%BNNEXTSTATEGP One synchronous Boolean update, in truth-table input order.
+% Based on bnNextState by Ilya Shmulevich (28 Aug 2002), modified by HL
+% (12 May 2003). Vectorized here; zero-input nodes retain their current value.
+persistent cached_parents cached_nv parents weights
+if isempty(cached_parents) || ~isequal(cached_parents,varF) || ~isequal(cached_nv,nv)
+    cached_parents = varF; cached_nv = nv;
+    parents = varF; parents(parents==0) = 1;
+    exponents = repmat(nv(:)',size(varF,1),1) - repmat((1:size(varF,1))',1,length(nv));
+    weights = 2.^exponents; weights(exponents<0) = 0;
+end
+indices = sum(double(x(parents)).*weights,1)+1;
+y = F(sub2ind(size(F),indices,1:length(x)));
+y(nv==0) = x(nv==0);
 end

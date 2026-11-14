@@ -1,21 +1,9 @@
-function [Move] = HeuristicExplore(NewVec,RankedList);
-% Choosing Next Move with a bias to primary inputs
-Ranks=RankedList(NewVec);
-RVec = unique(Ranks);
-RVector = cumsum(RVec./sum(RVec));
-randVal = rand;
-for n=1:length(RVec)
-    if randVal < RVector(n);
-        RankSet=RVec(n);
-    end
+function Move = HeuristicExplore(NewVec,RankedList)
+%HEURISTICEXPLORE Weighted rank-class draw, then uniform action in that class.
+ranks = RankedList(NewVec); classes = unique(ranks);
+thresholds = cumsum(classes/sum(classes));
+index = find(rand <= thresholds,1,'first');
+if isempty(index); index = length(classes); end
+arms = NewVec(ranks == classes(index));
+Move = arms(randi(length(arms)));
 end
-% We Can Now Select an Arm uniform Randomly from Chosen Set
-if isempty(RankSet)==1
-    hold=1;
-end
-ArmSet = NewVec(Ranks==RankSet);
-if isempty(ArmSet)==1
-    hold=1;
-end
-RandMoveIndex = randperm(length(ArmSet));
-Move = ArmSet(RandMoveIndex(1));

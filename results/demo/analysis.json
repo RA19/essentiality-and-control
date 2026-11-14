@@ -1,0 +1,55 @@
+{
+  "essentiality": {
+    "network": "T-helper differentiation",
+    "nodes": 23,
+    "dp_steps": 8,
+    "pulse_duration": 3,
+    "pulse_source": "GATA3",
+    "pulse_fault": "SA1",
+    "exact_initial_states": 524288,
+    "wild_type_periods": [
+      1,
+      1,
+      1
+    ],
+    "wild_type_basin_sizes": [
+      43202,
+      290110,
+      190976
+    ],
+    "faulted_periods": [
+      1
+    ],
+    "faulted_basin_sizes": [
+      524288
+    ]
+  },
+  "control": {
+    "network": "T-cell receptor signaling",
+    "nodes": 40,
+    "target": "cCbl",
+    "target_value": 1,
+    "policy": {
+      "ZAP70": 1,
+      "Fyn": 0,
+      "LAT": 0
+    },
+    "search_seed": 27,
+    "evaluation_seed": 2026,
+    "paired_initial_states": 512,
+    "wild_type_attractors_observed": 9,
+    "controlled_attractors_observed": 8,
+    "wild_type_period_counts": {
+      "1": 443,
+      "6": 69
+    },
+    "controlled_period_counts": {
+      "1": 512
+    },
+    "target_occupancy_wild_type": 0.0224609375,
+    "target_occupancy_controlled": 1.0,
+    "mean_cycle_aligned_hamming": 0.08776855468750001,
+    "mean_native_endpoint_hamming": 0.087744140625,
+    "example_initial_state": 1
+  }
+}

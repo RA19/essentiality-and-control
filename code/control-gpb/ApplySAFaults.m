@@ -1,5 +1,6 @@
 function [EndReward] = ApplySAFaults(Genes,NetData,NodeCount,TDepth,ControlNode,ControlValue,runs,CREB_FLAG,XTRA);
 % Extracting Final Reward on Gene Mutation Triplet Solution Applied
+assert(length(unique(mod(Genes-1,NodeCount)+1))==TDepth,'Each control gene must be distinct');
 
 if CREB_FLAG==0; % NORMAL NETWORK
 F = NetData.F;

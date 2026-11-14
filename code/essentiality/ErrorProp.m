@@ -91,7 +91,7 @@ for i = 1:No_States
                     SumNodesOn_0to1.SA1(n,:) = SumNodesOn_0to1.SA1(n,:) + x; 
                     Change0_1.SA1(n) = Change0_1.SA1(n) + 1;
                     PropState0_1.SA1(Change0_1.SA1(n),n) = i;
-                    OnNodes0_1.SA1(Change0_1.SA1(n),:,n) = reshape(s(3:end),1,[]).*x  % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
+                    OnNodes0_1.SA1(Change0_1.SA1(n),:,n) = reshape(s(3:end),1,[]).*x; % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
                 end
                 x(n) = 0; % resetting SAF 
                 
@@ -109,7 +109,7 @@ for i = 1:No_States
                     SumNodesOn_0to1.SA0(n,:) = SumNodesOn_0to1.SA0(n,:) + x; 
                     Change0_1.SA0(n) = Change0_1.SA0(n) + 1;
                     PropState0_1.SA0(Change0_1.SA0(n),n) = i;
-                    OnNodes0_1.SA0(Change0_1.SA0(n),:,n) = reshape(s(3:end),1,[]).*x  % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
+                    OnNodes0_1.SA0(Change0_1.SA0(n),:,n) = reshape(s(3:end),1,[]).*x; % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
                 end
                 x(n) = 1; % resetting SAF 
 
@@ -137,7 +137,7 @@ for i = 1:No_States
                     SumNodesOn_1to0.SA1(n,:) = SumNodesOn_1to0.SA1(n,:) + x;
                     Change1_0.SA1(n) = Change1_0.SA1(n) + 1;
                     PropState1_0.SA1(Change1_0.SA1(n),n) = i;
-                    OnNodes1_0.SA1(Change1_0.SA1(n),:,n) = reshape(s(3:end),1,[]).*x  % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
+                    OnNodes1_0.SA1(Change1_0.SA1(n),:,n) = reshape(s(3:end),1,[]).*x; % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
                 end
                 x(n) = 0;
             else % original input == 1 hence we stimulate SA0 fault and check for 1->0 transition at output 
@@ -154,7 +154,7 @@ for i = 1:No_States
                     SumNodesOn_1to0.SA0(n,:) = SumNodesOn_1to0.SA0(n,:) + x;
                     Change1_0.SA0(n) = Change1_0.SA0(n) + 1;
                     PropState1_0.SA0(Change1_0.SA0(n),n) = i;
-                    OnNodes1_0.SA0(Change1_0.SA0(n),:,n) = reshape(s(3:end),1,[]).*x  % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
+                    OnNodes1_0.SA0(Change1_0.SA0(n),:,n) = reshape(s(3:end),1,[]).*x; % Octave-compat: strread returns a column; force row to match x (MATLAB-broadcast-safe);
                 end
                 x(n) = 1; % Resetting stuck-at-fault
             end

@@ -1,6 +1,10 @@
 function [EndReward] = ApplyUCTSAFaults(Genes,NetData,NodeCount,TDepth,ControlNode,ControlValue,runs);
 % Final Reward Calculation for proposed Policy
 
+assert(length(Genes)==TDepth && length(unique(mod(Genes-1,NodeCount)+1))==TDepth,'Each control gene must be distinct');
+clamp_nodes = mod(Genes-1,NodeCount)+1;
+clamp_values = Genes>NodeCount;
+
 % Loading Network Data
 F = NetData.F;
 varF = NetData.varF;
@@ -25,6 +29,7 @@ for r=1:runs
     % Original Attractor
     [yAttOrig] = FindAtt(x,F,varF,nv,NodeCount);
     % SA Attractor
+    x(clamp_nodes) = clamp_values;
     [yAtt] = FindAtt(x,Fnew,varF,nv,NodeCount);
     % Hamming Distance Reward
     HD(r) = sum(abs(yAttOrig - yAtt));

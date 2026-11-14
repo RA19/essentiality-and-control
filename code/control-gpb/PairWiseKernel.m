@@ -1,7 +1,7 @@
 function [Node F varF nv] = PairWiseKernel(In,NodeCount,InVals)
 
 % Reading Input Test file in .bns format
-file = textread('TCell.txt', '%s', 'delimiter', '\n', 'whitespace', '');
+file = textread('Tcell.txt', '%s', 'delimiter', '\n', 'whitespace', '');
 l=1;
 for n=1:NodeCount
      Node(n).Type = file{l};

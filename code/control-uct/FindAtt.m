@@ -1,18 +1,21 @@
-function [yAtt] = FindAtt(x,F,varF,nv,n)
-% Finding Attractor
-States = 5*ones(1,n);
-AttFound=0;
-while AttFound~=1
-    % Generating Next State
+function [yAtt, cycle, trajectory] = FindAtt(x,F,varF,nv,n)
+%FINDATT Follow synchronous Boolean updates until a complete cycle repeats.
+% yAtt retains the historical first-repeated-state reward convention.
+% cycle contains every state in that attractor; trajectory starts at x.
+% A step limit turns nontermination into an explicit error.
+initial = x;
+visited = zeros(0,n);
+for step = 1:10000
     y = bnNextStateGP(x,F,varF,nv);
-    % Finding whether attractor reached
-    Matches = sum((States==repmat(y,size(States,1),1))');
-    if sum(Matches==n) > 0
-        AttFound=1;
+    matching = find(all(visited == repmat(y,size(visited,1),1),2),1);
+    if ~isempty(matching)
         yAtt = y;
-    else
-        x=y;
-        States = [States;y];
+        cycle = visited(matching:end,:);
+        trajectory = [initial;visited;y];
+        return;
     end
+    visited(end+1,:) = y;
+    x = y;
 end
-
+error('FindAtt:stepLimit','Attractor not reached within 10000 synchronous updates');
+end
