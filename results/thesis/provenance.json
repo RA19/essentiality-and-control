@@ -1,0 +1,36 @@
+{
+  "source": {
+    "title": "Essentiality and Control in Gene Regulatory Networks",
+    "author": "Rudi Agius",
+    "year": 2009,
+    "file": "docs/research/essentiality-and-control-in-gene-regulatory-networks.pdf"
+  },
+  "essentiality": {
+    "table": "Appendix 1.4d",
+    "pdf_page": 93,
+    "definition_sections": [
+      "7.2.1",
+      "7.2.2",
+      "7.2.3"
+    ],
+    "context": "T-helper differentiation, overexpression (SA1), worst-effect reference set",
+    "metric": "Top Rank Cost; lower is better",
+    "reference": "Ranking derived from preservation/loss of synchronous Boolean attractors, not experimental viability",
+    "supporting_result": {
+      "gene": "IFN-beta R",
+      "epp_rank": 4,
+      "source_table": "Table 8.1",
+      "pdf_page": 63
+    }
+  },
+  "control": {
+    "table": "Table 8.3",
+    "section": "8.3.1",
+    "printed_page": 55,
+    "pdf_page": 66,
+    "context": "T-cell receptor signaling, ZAP70 target ON; target intervention explicitly allowed",
+    "metric": "Final reward: preservation reward multiplied by control reward; higher is better",
+    "policy": "ZAP70 ON, LAT OFF, x; x is an ineffective third mutation, not a named fixed gene",
+    "aggregation": "Reported values; no uncertainty or repeated-run aggregation specified for this separate neutralization experiment"
+  }
+}

@@ -1,0 +1,3 @@
+strategy,final_reward
+Direct control,0.2033
+UCT with neutralization,0.921

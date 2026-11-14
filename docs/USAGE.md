@@ -27,6 +27,14 @@ python examples/build_showcase.py --figures-only
 
 This needs Python only. It reads the bundled native results, recomputes exact T-helper basins and sampled control-cycle analyses, and rebuilds the figures. No fabricated interpolation or simulated display data is added to the animations.
 
+## Rebuild only the original research result figures
+
+```bash
+python examples/build_thesis_figures.py
+```
+
+This redraws the essentiality comparison and control-neutralization result from the sourced tables in `results/thesis/`. The full showcase also rebuilds these figures. [Definitions and original sources](RESULTS.md).
+
 ## Change the search budget
 
 ```bash

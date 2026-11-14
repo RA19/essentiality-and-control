@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from grnlab.analysis import analyze
 from grnlab.figures import render
+from grnlab.thesis import render_thesis_results
 
 
 def find_octave(explicit=None):
@@ -66,6 +67,7 @@ def main():
         )
     data = analyze(ROOT)
     render(data, ROOT)
+    render_thesis_results(ROOT)
     print("Results: results/demo/ | Figures: docs/figures/")
 
 

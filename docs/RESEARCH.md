@@ -37,6 +37,10 @@ Relevant primary model publications:
 
 The executable definitions in this repository specify the exact model used for each figure; a related publication can contain other formulations or input assumptions.
 
+## Selected results
+
+[Two key results](RESULTS.md) show a T-helper essentiality comparison against four static centralities and a target-enabled control experiment demonstrating neutralizing mutations. Each includes original table values, source pages and metric definitions.
+
 ## Original control results
 
 The [control-search workbook](research/control-search-results.xls) preserves the original experimental tables. The full report explains the historical targets, budgets, baselines and repeated runs. Direct and indirect control solve different intervention constraints; neither the historical results nor the current example supports a blanket claim that one search method wins on every target.

@@ -84,6 +84,7 @@ Directory: [code/control-uct](../code/control-uct/README.md).
 | [boolean.py](../grnlab/boolean.py) | Evaluate scalar/batch truth-table updates, detect full cycles, infer edge signs, decode policies, enumerate exact basins and compare cycles |
 | [analysis.py](../grnlab/analysis.py) | Join native outputs to dynamics analysis, check endpoint agreement, export named metrics and choose documented illustrative examples |
 | [figures.py](../grnlab/figures.py) | Draw actual regulatory graphs, DP trellises, trajectories, basin flows, activity matrices, rankings and search curves |
+| [thesis.py](../grnlab/thesis.py), [build_thesis_figures.py](../examples/build_thesis_figures.py) | Redraw two original results from `results/thesis/` tables with explicit provenance; compute the displayed cost reduction and reward gain |
 | [build_showcase.py](../examples/build_showcase.py) | Locate Octave, run native examples, analyze results and render all panels |
 
 ## Check the behavior

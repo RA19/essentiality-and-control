@@ -4,6 +4,12 @@
 
 Every panel is generated from the native algorithm outputs or explicit transitions of the exported Boolean truth tables. The figures use separate visual encodings for **fault-path scores**, **binary states** and **cycle occupancy**.
 
+## Key results from the original research
+
+[Essentiality: 29.5% lower ranking cost than the best static baseline](RESULTS.md#essentiality-prioritizing-high-impact-perturbations) | [Control: reward 0.2033 to 0.9210 with a neutralizing intervention](RESULTS.md#control-pairing-control-with-neutralization)
+
+These two figures redraw original research tables. Their source data and settings are documented separately from the simulations below.
+
 ## Essentiality
 
 ### Fault propagation and DP paths

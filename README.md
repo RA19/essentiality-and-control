@@ -23,6 +23,12 @@ A highly connected gene need not transmit a large disturbance. Its Boolean funct
 
 We use the spread of a fault as a **proxy for essentiality within the model**. It describes sensitivity to a specified perturbation; biological essentiality also depends on the phenotype, context and experimental evidence.
 
+**Key result: better prioritization than static centralities.** In the T-helper overexpression experiment, we achieved a Top Rank Cost of **21.5**, compared with **30.5** for the best static baseline: **29.5% lower cost**. This measures how well high-impact perturbations are prioritized against an attractor-derived reference.
+
+![Original essentiality result: EPP-DP has lower Top Rank Cost than all four static centralities in the T-helper overexpression experiment.](docs/figures/thesis_essentiality_result.png)
+
+*[Original results and metric definition](docs/RESULTS.md#essentiality-prioritizing-high-impact-perturbations). Source: Appendix 1.4d, [PDF page 93](docs/research/essentiality-and-control-in-gene-regulatory-networks.pdf#page=93). This is a result from the original research; the eight-step simulations below are separate demonstrations.*
+
 To see what such a perturbation can do to long-term behavior, we can also run the Boolean network itself:
 
 ![Exact wild-type and GATA3-ON attractor basins, with the actual attractor states.](docs/figures/attractor_landscape.png)
@@ -36,6 +42,12 @@ To see what such a perturbation can do to long-term behavior, we can also run th
 For control, the target may be unavailable for direct intervention. We therefore search over **three distinct, non-target genes**, each held OFF or ON. A useful intervention must do two things: achieve the target state and limit changes elsewhere in the network.
 
 We implement two search strategies: **Gaussian Process Bandits (GPB)**, which share information between related intervention sets, and **UCT / UCT-RAVE**, which build a search tree and evaluate candidate policies through simulation.
+
+**Key result: a controlling mutation can be paired with a neutralizer.** In a separate experiment allowing direct intervention on ZAP70, we found that adding **LAT OFF**, together with an ineffective third mutation, to **ZAP70 ON** raised the reported final reward from **0.2033 to 0.9210**. The target remains ON while the neutralizing intervention limits disruption to the rest of the network.
+
+![Original control result: the reported reward rises from 0.2033 for direct ZAP70 control to 0.9210 for the UCT policy with LAT OFF.](docs/figures/thesis_control_result.png)
+
+*[Original result and experimental conditions](docs/RESULTS.md#control-pairing-control-with-neutralization). Source: Section 8.3.1, Table 8.3, [PDF page 66](docs/research/essentiality-and-control-in-gene-regulatory-networks.pdf#page=66). These are composite rewards, not success percentages. The following cCbl demonstration uses the different constraint of excluding the target from interventions.*
 
 ![Wild-type and controlled T-cell receptor networks evolving from the same initial state under a GPB-selected intervention.](docs/figures/control_dynamics.gif)
 
